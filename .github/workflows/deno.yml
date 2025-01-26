@@ -1,28 +1,27 @@
-name: Deploy
+name: Deploy to Debo
 
-on: push
+on:
+  push:
+    branches: [ main ]  # 當 main 分支有推送時觸發
+  workflow_dispatch:    # 允許手動觸發
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
-    permissions:
-      id-token: write # This is required to allow the GitHub Action to authenticate with Deno Deploy.
-      contents: read
-
+    
     steps:
-      - name: Clone repository
-        uses: actions/checkout@v3
-
-      - name: Install Deno
-        uses: denoland/setup-deno@v1
-
-      - name: Build
-        run: deno task build
-
-      - name: Deploy to Deno Deploy
-        uses: denoland/deployctl@v1
-        with:
-          project: late-duck-63 # the name of the project on Deno Deploy
-          entrypoint: https://deno.land/std/http/file_server.ts
-          root: dist
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Deploy to Debo
+      env:
+        DEBO_TOKEN: ddp_McDZ7KMHteGsJJIDfGDFTJxRQQHLQR3mKGe4
+      run: |
+        # 安裝 Debo CLI（假設存在）
+        npm install -g debo-cli
+        
+        # 登錄 Debo
+        debo login --token $DEBO_TOKEN
+        
+        # 部署
+        debo deploy
